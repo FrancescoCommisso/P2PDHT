@@ -1,7 +1,7 @@
 class Constants {
 
     /* To initialize multiple localhoosts do this:
-                                                    sudo ifconfig lo0 alias 127.0.1.1 127.0.1.3 127.0.1.2
+                                                    sudo ifconfig lo0 alias 127.0.1.0 127.0.1.1 127.0.1.2 127.0.1.3
     */
 
     static final int DIRECTORY_SERVER_UDP_PORT = 9001;
@@ -12,7 +12,7 @@ class Constants {
     static final String LOCAL_IP = "192.168.2.26";
     static final String LOCAL_IP_2 = "::1";
 
-    static final String SERVER_1_IP = "127.0.0.1";
+    static final String SERVER_1_IP = "127.0.1.0";
     static final String SERVER_2_IP = "127.0.1.1";
     static final String SERVER_3_IP = "127.0.1.2";
     static final String SERVER_4_IP = "127.0.1.3";

@@ -3,6 +3,7 @@ import java.net.*;
 import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 class DirectoryServer extends TCPServer{
 
@@ -29,7 +30,7 @@ class DirectoryServer extends TCPServer{
         return rightNeighbor;
     }
 
-    private void createUDPSocket() throws IOException {
+    private void createUDPSocket() throws IOException, InterruptedException {
         DatagramSocket serverSocket = new DatagramSocket(Constants.DIRECTORY_SERVER_UDP_PORT,this.getIPAddress());
         System.out.println("DirectoryServer: "+ this.getDirectoryServerID() + " creating UDP Socket at: "+ serverSocket.getLocalAddress() +":"+serverSocket.getLocalPort());
 
@@ -45,7 +46,7 @@ class DirectoryServer extends TCPServer{
 
             switch (message){
                 case "init":
-                    sendData = this.init();
+                    sendData = this.leftNeighbor.toString().substring(1).getBytes();
                     DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
                     serverSocket.send(sendPacket);
                     break;
@@ -62,11 +63,15 @@ class DirectoryServer extends TCPServer{
 
     void openUDPSocket(){
         Thread thread1 = new Thread(() -> {
+
             try {
                 this.createUDPSocket();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+
         });
         thread1.start();
     }
@@ -91,12 +96,18 @@ class DirectoryServer extends TCPServer{
         return list;
     }
 
+    private void getAllDirectoryServers(ArrayList<String> list) throws IOException, InterruptedException {
+        list.add(this.getIPAddress().toString().substring(1));
+        sendTCPMessage(ListToByteArray(list),leftNeighbor);
+    }
+
+    private void getAllDirectoryServers(String servers) throws IOException, InterruptedException {
+        servers+= this.getIPAddress().toString().substring(1) + "/n";
+        sendTCPMessage(servers,leftNeighbor);
+    }
+
     private byte[] init(){
         return this.getIPAddress().toString().substring(1).getBytes();
-    }
-    private byte[] getIPS(ArrayList<String> list) throws IOException {
-        list.add(this.getIPAddress().toString().substring(1));
-        return ListToByteArray(list);
     }
 
     private void informAndUpdate(){}
