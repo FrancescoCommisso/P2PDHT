@@ -1,29 +1,37 @@
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.*;
+import java.sql.Struct;
+import java.util.ArrayList;
+import java.util.List;
 
-class DirectoryServer{
+class DirectoryServer extends TCPServer{
 
-    private InetAddress IPAddress;
-    private int directoryServerID;
-    private int leftNeighbor;
-    private int rightNeighbor;
-
+    private InetAddress leftNeighbor;
+    private InetAddress rightNeighbor;
 
     DirectoryServer(String IPAddress, int directoryServerID) throws UnknownHostException {
-        this.IPAddress =InetAddress.getByName(IPAddress);
-        this.directoryServerID = directoryServerID;
+        super(IPAddress, directoryServerID);
     }
 
-    public static int createFakePortFromID(int id){
-        return 9000 + id;
+    public void setLeftNeighbor(String leftNeighbor) throws UnknownHostException {
+        this.leftNeighbor = InetAddress.getByName(leftNeighbor);
+    }
+
+    public void setRightNeighbor(String rightNeighbor) throws UnknownHostException {
+        this.rightNeighbor = InetAddress.getByName(rightNeighbor);
+    }
+
+    public InetAddress getLeftNeighbor() {
+        return leftNeighbor;
+    }
+
+    public InetAddress getRightNeighbor() {
+        return rightNeighbor;
     }
 
     private void createUDPSocket() throws IOException {
-        DatagramSocket serverSocket = new DatagramSocket(Constants.DIRECTORY_SERVER_UDP_PORT,IPAddress);
-        System.out.println("DirectoryServer: "+ directoryServerID + " creating UDP Socket at: "+ serverSocket.getLocalAddress() +":"+serverSocket.getLocalPort());
+        DatagramSocket serverSocket = new DatagramSocket(Constants.DIRECTORY_SERVER_UDP_PORT,this.getIPAddress());
+        System.out.println("DirectoryServer: "+ this.getDirectoryServerID() + " creating UDP Socket at: "+ serverSocket.getLocalAddress() +":"+serverSocket.getLocalPort());
 
         byte[] receiveData = new byte[1024];
         byte[] sendData;
@@ -47,7 +55,7 @@ class DirectoryServer{
                     break;
                 case "exit": this.exit();
                     break;
-                default: System.out.println("Host #"+ directoryServerID +" received a bad message: "+message);
+                default: System.out.println("Host #"+ this.getDirectoryServerID() +" received a bad message: "+message);
             }
         }
     }
@@ -63,59 +71,32 @@ class DirectoryServer{
         thread1.start();
     }
 
-    private void startListeningTCP() throws IOException {
-        String clientMessage;
-        String response;
-        ServerSocket welcomeSocket = new ServerSocket(Constants.DIRECTORY_SERVER_TCP_PORT,0,IPAddress);
-        System.out.println("DirectoryServer: "+ directoryServerID + " creating TCP Socket at: "+ welcomeSocket.getInetAddress().toString() + ":" + welcomeSocket.getLocalPort());
-
-        while (true) {
-            Socket connectionSocket = welcomeSocket.accept();
-
-            BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-            DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-            clientMessage = inFromClient.readLine();
-
-            System.out.println("From Client: " + clientMessage);
-            response = "Got your message boy!" + '\n';
-            outToClient.writeBytes(response);
+    private byte[] ListToByteArray(List<String> list) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(baos);
+        for (String element : list) {
+            out.writeUTF(element);
         }
+        return baos.toByteArray();
     }
 
-
-
-
-    void openTCPSocket(){
-
-        Thread thread1 = new Thread(() -> {
-            try {
-                this.startListeningTCP();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        thread1.start();
+    private List<String> byteArrayToList(byte[] byteArray) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
+        DataInputStream in = new DataInputStream(bais);
+        ArrayList<String> list = new ArrayList<>();
+        while (in.available() > 0) {
+            String element = in.readUTF();
+            list.add(element);
+        }
+        return list;
     }
-
-
-
-    void sendTCPMessage(String data,InetAddress directoryServerIP) throws IOException {
-        String response;
-
-        Socket clientSocket = new Socket(directoryServerIP, Constants.DIRECTORY_SERVER_TCP_PORT);
-
-        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-        outToServer.writeBytes(data + '\n');
-        response = inFromServer.readLine();
-        System.out.println("FROM SERVER: " + response);
-        clientSocket.close();
-    }
-
 
     private byte[] init(){
-        return this.IPAddress.toString().getBytes();
+        return this.getIPAddress().toString().substring(1).getBytes();
+    }
+    private byte[] getIPS(ArrayList<String> list) throws IOException {
+        list.add(this.getIPAddress().toString().substring(1));
+        return ListToByteArray(list);
     }
 
     private void informAndUpdate(){}
