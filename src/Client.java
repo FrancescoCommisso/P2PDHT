@@ -1,39 +1,48 @@
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Client {
 
-    private String directoryServerIPs[];
-    Client(){}
+    private int clientID;
+    private InetAddress IPaddress;
+    private ArrayList<String> directoryServerIPs;
+    Client(int id,String IPaddress) throws UnknownHostException {
+        this.IPaddress = InetAddress.getByName(IPaddress);
+        this.clientID=id;
+        directoryServerIPs = new ArrayList<>();
+        directoryServerIPs.add(Constants.SERVER_1_IP);
+    }
 
-    protected String[] getDirectoryServerIPs(){
+    protected ArrayList<String> getDirectoryServerIPs(){
         return this.directoryServerIPs;
     }
 
-    public void setDirectoryServerIPs(String[] directoryServerIPs) {
-        this.directoryServerIPs = directoryServerIPs;
-    }
-
     void init() throws IOException {
-        DatagramSocket clientSocket = new DatagramSocket();
-        InetAddress directoryServer1IP = InetAddress.getByName(Constants.SERVER_1_IP);
 
-        byte[] receiveData = new byte[1024];
-        byte[] sendData = Constants.INIT.getBytes();
+        while(directoryServerIPs.size()<4){
+            DatagramSocket clientSocket = new DatagramSocket();
+            InetAddress nextServer = InetAddress.getByName(directoryServerIPs.get(directoryServerIPs.size()-1));
+            byte[] receiveData = new byte[1024];
+            byte[] sendData = Constants.INIT.getBytes();
 
-        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, directoryServer1IP,Constants.DIRECTORY_SERVER_UDP_PORT);
-        clientSocket.send(sendPacket);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, nextServer ,Constants.DIRECTORY_SERVER_UDP_PORT);
+            clientSocket.send(sendPacket);
 
-        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-        clientSocket.receive(receivePacket);
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+            clientSocket.receive(receivePacket);
 
-        String response = new String(receivePacket.getData(),receivePacket.getOffset(), receivePacket.getLength());
-        System.out.println("FROM SERVER: " + response);
+            String response = new String(receivePacket.getData(),receivePacket.getOffset(), receivePacket.getLength());
+            directoryServerIPs.add(response);
 
-        clientSocket.close();
+            clientSocket.close();
+        }
+
+        System.out.println("Client: "+clientID + " initialized with Server IDs:");
+        for(String s:directoryServerIPs){
+            System.out.println(s);
+        }
     }
-
-
 
 
 

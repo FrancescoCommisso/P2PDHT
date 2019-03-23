@@ -15,16 +15,20 @@ public class Main {
         DirectoryServer ds3 = new DirectoryServer(Constants.SERVER_3_IP,3);
         DirectoryServer ds4 = new DirectoryServer(Constants.SERVER_4_IP,4);
 
-        ds1.setLeftNeighbor(Constants.SERVER_3_IP);
+        ds1.setLeftNeighbor(Constants.SERVER_4_IP);
         ds1.setRightNeighbor(Constants.SERVER_2_IP);
 
         ds2.setLeftNeighbor(Constants.SERVER_1_IP);
         ds2.setRightNeighbor(Constants.SERVER_3_IP);
 
         ds3.setLeftNeighbor(Constants.SERVER_2_IP);
-        ds3.setRightNeighbor(Constants.SERVER_1_IP);
+        ds3.setRightNeighbor(Constants.SERVER_4_IP);
 
-        Client client = new Client();
+        ds4.setLeftNeighbor(Constants.SERVER_3_IP);
+        ds4.setRightNeighbor(Constants.SERVER_1_IP);
+
+        Client client = new Client(1,Constants.LOCAL_IP);
+        Client client2 = new Client(2,Constants.LOCAL_IP);
 
         ds1.openUDPSocket();
         ds2.openUDPSocket();
@@ -36,10 +40,10 @@ public class Main {
         ds3.openTCPSocket();
         ds4.openTCPSocket();
 
-
-        TimeUnit.SECONDS.sleep(1);
-        ds1.sendTCPMessage("You getting these messages boy?",ds1.getLeftNeighbor());
-
+//
+//        TimeUnit.SECONDS.sleep(1);
+//
+        client2.init();
         client.init();
 //
     }
