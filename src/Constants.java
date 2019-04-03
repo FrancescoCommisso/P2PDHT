@@ -1,13 +1,15 @@
 class Constants {
 
-    /* To initialize multiple localhoosts do this:
-                                                    sudo ifconfig lo0 alias 127.0.1.0 127.0.1.1 127.0.1.2 127.0.1.3
+    /* To initialize multiple localhosts run this command in the terminal:
+
+    sudo ifconfig lo0 alias 127.0.1.0 127.0.1.1 127.0.1.2 127.0.1.3
+
     */
 
     static final int DIRECTORY_SERVER_UDP_PORT = 9001;
     static final int DIRECTORY_SERVER_TCP_PORT = 9002;
-    static final int CLIENT_UDP_PORT =           9011;
-    static final int SERVER_UDP_PORT =           9012;
+    static final int CLIENT_UDP_PORT = 9011;
+    static final int SERVER_UDP_PORT = 9012;
 
     static final String LOCAL_IP = "192.168.2.26";
     static final String LOCAL_IP_2 = "::1";
@@ -27,7 +29,6 @@ class Constants {
     /*                CLIENT MESSAGES                            */
 
     /*                DIRECTORY SERVER MESSAGES                          */
-
 
 
 }

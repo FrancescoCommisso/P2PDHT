@@ -13,7 +13,7 @@ public class TCPServer {
     private int directoryServerID;
 
     public TCPServer(String IPAddress, int directoryServerID) throws UnknownHostException {
-        this.IPAddress =InetAddress.getByName(IPAddress);
+        this.IPAddress = InetAddress.getByName(IPAddress);
         this.directoryServerID = directoryServerID;
     }
 
@@ -28,8 +28,8 @@ public class TCPServer {
     private void createTCPSocket() throws IOException {
         String clientMessage;
         String response;
-        ServerSocket welcomeSocket = new ServerSocket(Constants.DIRECTORY_SERVER_TCP_PORT,0,IPAddress);
-        System.out.println("DirectoryServer: "+ directoryServerID + " creating TCP Socket at: "+ welcomeSocket.getInetAddress().toString() + ":" + welcomeSocket.getLocalPort());
+        ServerSocket welcomeSocket = new ServerSocket(Constants.DIRECTORY_SERVER_TCP_PORT, 0, IPAddress);
+        System.out.println("DirectoryServer: " + directoryServerID + " creating TCP Socket at: " + welcomeSocket.getInetAddress().toString() + ":" + welcomeSocket.getLocalPort());
 
         while (true) {
             Socket connectionSocket = welcomeSocket.accept();
@@ -39,12 +39,12 @@ public class TCPServer {
             clientMessage = inFromClient.readLine();
 
             System.out.println("From Client: " + clientMessage);
-            response = "Got your message boy!" + '\n';
+            response = "Got your message!" + '\n';
             outToClient.writeBytes(response);
         }
     }
 
-    void openTCPSocket(){
+    void openTCPSocket() {
 
         Thread thread1 = new Thread(() -> {
             try {
