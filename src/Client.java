@@ -46,4 +46,12 @@ class Client extends UDPClient {
         sendUDPMessage(contentName, directoryServerIPs.get(serverIndex), Constants.DIRECTORY_SERVER_UDP_PORT, Constants.INFORM_AND_UPDATE);
     }
 
+    String queryForContent(String contentName) throws IOException {
+        int serverIndex = hashContentName(contentName);
+        DatagramPacket receivePacket = sendUDPMessage(contentName, directoryServerIPs.get(serverIndex), Constants.DIRECTORY_SERVER_UDP_PORT, Constants.QUERY_FOR_CONTENT);
+        String result = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
+        System.out.println("query for content returned: " + result);
+        return result;
+    }
+
 }

@@ -75,7 +75,9 @@ class DirectoryServer extends TCPServer {
                     serverSocket.send(sendPacket1);
                     break;
                 case Constants.QUERY_FOR_CONTENT:
-                    this.queryForContent();
+                    sendData = this.queryForContent(message.substring(1)).getBytes();
+                    DatagramPacket sendPacket2 = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+                    serverSocket.send(sendPacket2);
                     break;
                 case Constants.EXIT:
                     this.exit();
@@ -107,7 +109,8 @@ class DirectoryServer extends TCPServer {
         clientLookup.put(contentName, clientIp);
     }
 
-    private void queryForContent() {
+    private String queryForContent(String contentName) {
+        return clientLookup.getOrDefault(contentName, "Image Not Found");
     }
 
     private void exit() {
