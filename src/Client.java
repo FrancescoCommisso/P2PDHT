@@ -60,7 +60,7 @@ class Client extends UDPClient {
             String result = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
             System.out.println("exit returned: " + result);
         }
-
+//
     }
 }
 
