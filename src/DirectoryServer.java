@@ -4,6 +4,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 class DirectoryServer extends TCPServer {
 
@@ -17,15 +19,11 @@ class DirectoryServer extends TCPServer {
         clientLookup = new HashMap<>();
     }
 
-    public InetAddress getLeftNeighbor() {
-        return leftNeighbor;
-    }
-
     void setLeftNeighbor(String leftNeighbor) throws UnknownHostException {
         this.leftNeighbor = InetAddress.getByName(leftNeighbor);
     }
 
-    public InetAddress getRightNeighbor() {
+    private InetAddress getRightNeighbor() {
         return rightNeighbor;
     }
 
@@ -80,7 +78,9 @@ class DirectoryServer extends TCPServer {
                     serverSocket.send(sendPacket2);
                     break;
                 case Constants.EXIT:
-                    this.exit();
+                    sendData = this.exit((receivePacket.getAddress().toString().substring(1))).getBytes();
+                    DatagramPacket sendPacket3 = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+                    serverSocket.send(sendPacket3);
                     break;
                 default:
                     System.out.println("Host #" + this.getDirectoryServerID() + " received a bad message: " + message.substring(1) + " should have received " + Constants.INIT);
@@ -113,7 +113,17 @@ class DirectoryServer extends TCPServer {
         return clientLookup.getOrDefault(contentName, "Image Not Found");
     }
 
-    private void exit() {
+    private String exit(String clientIP) {
+        Set<String> keys = new HashSet<>();
+        for (HashMap.Entry<String, String> entry : clientLookup.entrySet()) {
+            if (entry.getValue().equals(clientIP)) {
+                keys.add(entry.getKey());
+            }
+        }
+        clientLookup.keySet().removeAll(keys);
+        String rc = String.valueOf(keys.size());
+        String result = "Directory Server: " + getDirectoryServerID() + " removed " + rc + " records associated with client: " + clientIP;
+        return result;
     }
 
 

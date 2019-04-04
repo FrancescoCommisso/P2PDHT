@@ -54,4 +54,14 @@ class Client extends UDPClient {
         return result;
     }
 
+    void exit() throws IOException {
+        for (String ds : directoryServerIPs) {
+            DatagramPacket receivePacket = sendUDPMessage("", ds, Constants.DIRECTORY_SERVER_UDP_PORT, Constants.EXIT);
+            String result = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
+            System.out.println("exit returned: " + result);
+        }
+//
+    }
 }
+
+
