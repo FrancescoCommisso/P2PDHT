@@ -32,8 +32,14 @@ public class Main {
             ds.printAllRecords();
         }
 
-        client1.queryForContent("a red car");
+        client1.queryForContent("a red car asd ");
 
+        client2.exit();
+
+
+        for (DirectoryServer ds : sp.getDirectoryServers()) {
+            ds.printAllRecords();
+        }
 
     }
 }

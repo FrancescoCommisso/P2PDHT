@@ -1,7 +1,7 @@
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-public class ServerPool {
+class ServerPool {
     private ArrayList<DirectoryServer> directoryServers;
 
     ServerPool() throws UnknownHostException {
@@ -40,7 +40,7 @@ public class ServerPool {
 
     }
 
-    public ArrayList<DirectoryServer> getDirectoryServers() {
+    ArrayList<DirectoryServer> getDirectoryServers() {
         return directoryServers;
     }
 }
