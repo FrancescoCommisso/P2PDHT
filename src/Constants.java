@@ -1,9 +1,11 @@
 class Constants {
 
-    /* To initialize multiple localhosts run this command in the terminal:
+    /* To initialize multiple loopback ip's run this command in the terminal:
 
-    sudo ifconfig lo0 alias 127.0.1.0 127.0.1.1 127.0.1.2 127.0.1.3
 
+    sudo ifconfig lo0 alias 127.0.1.0 127.0.1.1 127.0.1.2 127.0.1.3 127.0.1.4 127.0.1.5 127.0.1.6 127.0.1.7
+
+    ***** must be run individually for each ip****
     */
 
     static final int DIRECTORY_SERVER_UDP_PORT = 9001;
@@ -19,14 +21,29 @@ class Constants {
     static final String SERVER_3_IP = "127.0.1.2";
     static final String SERVER_4_IP = "127.0.1.3";
 
+    static final String CLIENT_IP_1 = "127.0.1.4";
+    static final String CLIENT_IP_2 = "127.0.1.5";
+    static final String CLIENT_IP_3 = "127.0.1.6";
+    static final String CLIENT_IP_4 = "127.0.1.7";
+
 
     /*                CLIENT MESSAGES                            */
-    static final String INIT = "init";
-    static final String INFORM_AND_UPDATE = "inform and update";
-    static final String QUERY_FOR_CONTENT = "query for content";
-    static final String FILE_TRANSFER = "file transfer";
-    static final String EXIT = "exit";
+    static final String INIT = "1";
+    static final String INFORM_AND_UPDATE = "2";
+    static final String QUERY_FOR_CONTENT = "3";
+    static final String FILE_TRANSFER = "4";
+    static final String EXIT = "5";
     /*                CLIENT MESSAGES                            */
+
+//
+//    /*                CLIENT MESSAGES                            */
+//    static final BigInteger INIT = BigInteger.valueOf(1);
+//    static final Integer INFORM_AND_UPDATE = 1;
+//    static final Integer QUERY_FOR_CONTENT = 2;
+//    static final Integer FILE_TRANSFER = 3;
+//    static final Integer EXIT = 4;
+//    /*                CLIENT MESSAGES                            */
+
 
     /*                DIRECTORY SERVER MESSAGES                          */
 
