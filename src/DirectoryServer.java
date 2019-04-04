@@ -1,11 +1,9 @@
-import java.io.*;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 class DirectoryServer extends TCPServer {
 
@@ -36,13 +34,16 @@ class DirectoryServer extends TCPServer {
     }
 
     void printAllRecords() {
+        System.out.println();
+        System.out.println("**********************************************");
         System.out.println("Directory Server: " + getDirectoryServerID() + " has the following entries:");
         for (HashMap.Entry<String, String> entry : clientLookup.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            System.out.println("(" + key + ":" + value + ")");
-            // do stuff
+            System.out.println("    (" + key + ":" + value + ")");
         }
+        System.out.println("**********************************************");
+
     }
 
     private void createUDPSocket() throws IOException, InterruptedException {
@@ -98,42 +99,11 @@ class DirectoryServer extends TCPServer {
         thread1.start();
     }
 
-    private byte[] ListToByteArray(List<String> list) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(baos);
-        for (String element : list) {
-            out.writeUTF(element);
-        }
-        return baos.toByteArray();
-    }
-
-    private List<String> byteArrayToList(byte[] byteArray) throws IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
-        DataInputStream in = new DataInputStream(bais);
-        ArrayList<String> list = new ArrayList<>();
-        while (in.available() > 0) {
-            String element = in.readUTF();
-            list.add(element);
-        }
-        return list;
-    }
-
-    private void getAllDirectoryServers(ArrayList<String> list) throws IOException, InterruptedException {
-        list.add(this.getIPAddress().toString().substring(1));
-        sendTCPMessage(ListToByteArray(list), leftNeighbor);
-    }
-
-    private void getAllDirectoryServers(String servers) throws IOException, InterruptedException {
-        servers += this.getIPAddress().toString().substring(1) + "/n";
-        sendTCPMessage(servers, leftNeighbor);
-    }
-
     private byte[] init() {
         return getRightNeighbor().toString().substring(1).getBytes();
     }
 
     private void informAndUpdate(String clientIp, String contentName) {
-//        System.out.println("Server: " + getDirectoryServerID() + " Received: " + contentName + " from client: " + clientIp);
         clientLookup.put(contentName, clientIp);
     }
 

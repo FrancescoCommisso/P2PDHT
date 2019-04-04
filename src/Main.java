@@ -28,8 +28,10 @@ public class Main {
         ds4.setLeftNeighbor(Constants.SERVER_3_IP);
         ds4.setRightNeighbor(Constants.SERVER_1_IP);
 
-        Client client = new Client(1, Constants.CLIENT_IP_1);
+        Client client1 = new Client(1, Constants.CLIENT_IP_1);
         Client client2 = new Client(2, Constants.CLIENT_IP_2);
+        Client client3 = new Client(3, Constants.CLIENT_IP_3);
+        Client client4 = new Client(4, Constants.CLIENT_IP_4);
 
         ds1.openUDPSocket();
         ds2.openUDPSocket();
@@ -41,17 +43,21 @@ public class Main {
         ds3.openTCPSocket();
         ds4.openTCPSocket();
 
-//
-//
-//
+        client1.init();
         client2.init();
-        client.init();
+        client3.init();
+        client4.init();
 
         client2.informAndUpdate("picture of a dag");
-        client.informAndUpdate("a cool picture");
-        client2.informAndUpdate("an ugly picture");
+        client1.informAndUpdate("a");
+        client2.informAndUpdate("b");
         client2.informAndUpdate("selfie123");
-        client.informAndUpdate("grad");
+        client1.informAndUpdate("grad");
+        client3.informAndUpdate("c");
+        client4.informAndUpdate("d");
+        client4.informAndUpdate("a red car");
+        client2.informAndUpdate("the monalisa");
+        client3.informAndUpdate("a tiger");
 
         for (DirectoryServer ds : serverPool) {
             ds.printAllRecords();
