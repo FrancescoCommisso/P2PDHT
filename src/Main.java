@@ -34,7 +34,10 @@ public class Main {
 
         client1.queryForContent("a red car asd ");
 
+        client1.exit();
         client2.exit();
+        client3.exit();
+        client4.exit();
 
 
         for (DirectoryServer ds : sp.getDirectoryServers()) {
