@@ -110,7 +110,7 @@ class DirectoryServer extends TCPServer {
     }
 
     private String queryForContent(String contentName) {
-        return clientLookup.getOrDefault(contentName, "Image Not Found");
+        return clientLookup.getOrDefault(contentName, Constants.DS_RESPONSE_IMAGE_NOT_FOUND);
     }
 
     private String exit(String clientIP) {
@@ -122,8 +122,7 @@ class DirectoryServer extends TCPServer {
         }
         clientLookup.keySet().removeAll(keys);
         String rc = String.valueOf(keys.size());
-        String result = "Directory Server: " + getDirectoryServerID() + " removed " + rc + " records associated with client: " + clientIP;
-        return result;
+        return "Directory Server: " + getDirectoryServerID() + " removed " + rc + " records associated with client: " + clientIP;
     }
 
 

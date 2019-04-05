@@ -27,6 +27,8 @@ class Constants {
     static final String CLIENT_IP_3 = "127.0.1.6";
     static final String CLIENT_IP_4 = "127.0.1.7";
 
+    static final String DS_RESPONSE_IMAGE_NOT_FOUND = "404 IMAGE NOT FOUND";
+
 
     /*                CLIENT MESSAGES                            */
     static final String INIT = "1";

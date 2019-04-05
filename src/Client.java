@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -8,12 +9,16 @@ class Client extends UDPClient {
 
     private int clientID;
     private ArrayList<String> directoryServerIPs;
+    private File imageDirectory;
 
     Client(int id, String IPaddress) throws UnknownHostException {
         super(InetAddress.getByName(IPaddress));
         this.clientID = id;
         directoryServerIPs = new ArrayList<>();
         directoryServerIPs.add(Constants.SERVER_1_IP);
+        String imagesPath = "/Users/Francesco/Desktop/P2PDHT/Client_" + clientID + "_Images";
+        imageDirectory = new File(imagesPath);
+        imageDirectory.mkdirs();
     }
 
     void init() throws IOException {
@@ -24,8 +29,8 @@ class Client extends UDPClient {
             String response = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
             directoryServerIPs.add(response);
         }
-
-        System.out.println("Client: " + clientID + " initialized with Server IDs:");
+        System.out.println();
+        System.out.println("Client: " + clientID + " initialized with Server IPs:");
         for (String s : directoryServerIPs) {
             System.out.println(s);
         }
@@ -56,11 +61,11 @@ class Client extends UDPClient {
 
     void exit() throws IOException {
         for (String ds : directoryServerIPs) {
-            DatagramPacket receivePacket = sendUDPMessage("", ds, Constants.DIRECTORY_SERVER_UDP_PORT, Constants.EXIT);
-            String result = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
-            System.out.println("exit returned: " + result);
+            sendUDPMessage("", ds, Constants.DIRECTORY_SERVER_UDP_PORT, Constants.EXIT);
         }
-//
+        System.out.println("Client: " + clientID + " has exited the network");
+        imageDirectory.delete();
+
     }
 }
 
