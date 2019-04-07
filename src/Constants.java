@@ -12,7 +12,9 @@ class Constants {
     static final int DIRECTORY_SERVER_UDP_PORT = 9001;
     static final int DIRECTORY_SERVER_TCP_PORT = 9002;
     static final int CLIENT_UDP_PORT = 9011;
-    static final int SERVER_UDP_PORT = 9012;
+    static final int PEER_TCP_IN_PORT = 9012;
+    static final int PEER_TCP_OUT_PORT = 9013;
+
 
     static final String LOCAL_IP = "192.168.2.26";
     static final String LOCAL_IP_2 = "::1";

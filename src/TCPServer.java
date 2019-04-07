@@ -10,26 +10,32 @@ import java.net.UnknownHostException;
 public class TCPServer {
 
     private InetAddress IPAddress;
-    private int directoryServerID;
+    private int serverID;
+    private int port;
 
-    public TCPServer(String IPAddress, int directoryServerID) throws UnknownHostException {
+    TCPServer(String IPAddress, int serverID, int port) throws UnknownHostException {
         this.IPAddress = InetAddress.getByName(IPAddress);
-        this.directoryServerID = directoryServerID;
+        this.serverID = serverID;
+        this.port = port;
     }
 
-    public InetAddress getIPAddress() {
+    InetAddress getIPAddress() {
         return IPAddress;
     }
 
-    public int getDirectoryServerID() {
-        return directoryServerID;
+    int getServerID() {
+        return serverID;
     }
 
-    private void createTCPSocket() throws IOException {
+    int getPort() {
+        return port;
+    }
+
+    protected void createTCPSocket() throws IOException {
         String clientMessage;
         String response;
-        ServerSocket welcomeSocket = new ServerSocket(Constants.DIRECTORY_SERVER_TCP_PORT, 0, IPAddress);
-        System.out.println("DirectoryServer: " + directoryServerID + " creating TCP Socket at: " + welcomeSocket.getInetAddress().toString() + ":" + welcomeSocket.getLocalPort());
+        ServerSocket welcomeSocket = new ServerSocket(port, 0, IPAddress);
+        System.out.println("Server: " + serverID + " creating TCP Socket at: " + welcomeSocket.getInetAddress().toString() + ":" + welcomeSocket.getLocalPort());
 
         while (true) {
             Socket connectionSocket = welcomeSocket.accept();
@@ -44,6 +50,11 @@ public class TCPServer {
         }
     }
 
+    //OVERRIDE ME IN SUBCLASSES
+//    protected BufferedImage handleClientMessage(String clientMessage) throws IOException {
+//return new BufferedImage();
+//    }
+
     void openTCPSocket() {
 
         Thread thread1 = new Thread(() -> {
@@ -56,31 +67,16 @@ public class TCPServer {
         thread1.start();
     }
 
-    void sendTCPMessage(String data, InetAddress directoryServerIP) throws IOException {
+    void sendTCPMessage(String data, String dstIP, int dstPort) throws IOException {
         String response;
-
-        Socket clientSocket = new Socket(directoryServerIP, Constants.DIRECTORY_SERVER_TCP_PORT);
+        Socket clientSocket = new Socket(InetAddress.getByName(dstIP), dstPort, IPAddress, Constants.PEER_TCP_OUT_PORT);
 
         DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
         outToServer.writeBytes(data + '\n');
         response = inFromServer.readLine();
-        System.out.println("FROM SERVER: " + response);
-        clientSocket.close();
-    }
-
-    void sendTCPMessage(byte[] byteArray, InetAddress directoryServerIP) throws IOException {
-        String response;
-
-        Socket clientSocket = new Socket(directoryServerIP, Constants.DIRECTORY_SERVER_TCP_PORT);
-
-        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-        outToServer.write(byteArray);
-        response = inFromServer.readLine();
-        System.out.println("FROM SERVER: " + response);
+        System.out.println("client: " + serverID + " received: " + response + " from: " + clientSocket.getRemoteSocketAddress().toString());
         clientSocket.close();
     }
 

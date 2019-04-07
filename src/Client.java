@@ -1,3 +1,5 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -9,17 +11,31 @@ class Client extends UDPClient {
 
     private int clientID;
     private ArrayList<String> directoryServerIPs;
+    private String imagesPath;
     private File imageDirectory;
+    private PeerTCPServer tcpServer;
 
     Client(int id, String IPaddress) throws UnknownHostException {
         super(InetAddress.getByName(IPaddress));
         this.clientID = id;
         directoryServerIPs = new ArrayList<>();
         directoryServerIPs.add(Constants.SERVER_1_IP);
-        String imagesPath = "/Users/Francesco/Desktop/P2PDHT/Client_" + clientID + "_Images";
+        imagesPath = "/Users/Francesco/Desktop/P2PDHT/Client_" + clientID + "_Images";
         imageDirectory = new File(imagesPath);
         imageDirectory.mkdirs();
+        tcpServer = new PeerTCPServer(IPaddress, clientID, Constants.PEER_TCP_IN_PORT, this);
+        tcpServer.openTCPSocket();
     }
+
+    String getImagesPath() {
+        return imagesPath;
+    }
+
+    void testTCP() throws IOException {
+        String httpMessage = HTTPGenerator.createHTTPRequest("a.jpeg", Constants.CLIENT_IP_1);
+        this.tcpServer.sendTCPMessage(httpMessage, queryForContent("a"), Constants.PEER_TCP_IN_PORT);
+    }
+
 
     void init() throws IOException {
 
@@ -59,14 +75,26 @@ class Client extends UDPClient {
         return result;
     }
 
+    void fileTransfer(String contentName) throws IOException {
+        String peerIP = queryForContent(contentName);
+        String httpMessage = HTTPGenerator.createHTTPRequest(contentName, peerIP);
+        this.tcpServer.sendTCPMessage(httpMessage, peerIP, Constants.PEER_TCP_IN_PORT);
+    }
+
     void exit() throws IOException {
         for (String ds : directoryServerIPs) {
             sendUDPMessage("", ds, Constants.DIRECTORY_SERVER_UDP_PORT, Constants.EXIT);
         }
         System.out.println("Client: " + clientID + " has exited the network");
         imageDirectory.delete();
-
     }
+
+    BufferedImage handleFileTransgerRequest(String clientRequest) throws IOException {
+        String fileName = clientRequest.substring(4, clientRequest.length() - 9);
+        System.out.println("about to read: " + imagesPath + "/" + fileName);
+        return ImageIO.read(new File(imagesPath + "/" + fileName));
+    }
+
 }
 
 

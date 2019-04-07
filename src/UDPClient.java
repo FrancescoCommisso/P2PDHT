@@ -10,6 +10,10 @@ public abstract class UDPClient implements UDPMessageSender {
         this.IPaddress = IPaddress;
     }
 
+    public InetAddress getIPaddress() {
+        return IPaddress;
+    }
+
     @Override
     public DatagramPacket sendUDPMessage(String message, String ip, int port, String messageType) throws IOException {
         DatagramSocket clientSocket = new DatagramSocket(Constants.CLIENT_UDP_PORT, this.IPaddress);

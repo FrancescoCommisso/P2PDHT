@@ -15,7 +15,7 @@ class DirectoryServer extends TCPServer {
     private HashMap<String, String> clientLookup;
 
     DirectoryServer(String IPAddress, int directoryServerID) throws UnknownHostException {
-        super(IPAddress, directoryServerID);
+        super(IPAddress, directoryServerID, Constants.DIRECTORY_SERVER_TCP_PORT);
         clientLookup = new HashMap<>();
     }
 
@@ -34,7 +34,7 @@ class DirectoryServer extends TCPServer {
     void printAllRecords() {
         System.out.println();
         System.out.println("**********************************************");
-        System.out.println("Directory Server: " + getDirectoryServerID() + " has the following entries:");
+        System.out.println("Directory Server: " + getServerID() + " has the following entries:");
         for (HashMap.Entry<String, String> entry : clientLookup.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
@@ -46,7 +46,7 @@ class DirectoryServer extends TCPServer {
 
     private void createUDPSocket() throws IOException, InterruptedException {
         DatagramSocket serverSocket = new DatagramSocket(Constants.DIRECTORY_SERVER_UDP_PORT, this.getIPAddress());
-        System.out.println("DirectoryServer: " + this.getDirectoryServerID() + " creating UDP Socket at: " + serverSocket.getLocalAddress() + ":" + serverSocket.getLocalPort());
+        System.out.println("DirectoryServer: " + this.getServerID() + " creating UDP Socket at: " + serverSocket.getLocalAddress() + ":" + serverSocket.getLocalPort());
 
         byte[] receiveData = new byte[1024];
         byte[] sendData;
@@ -83,7 +83,7 @@ class DirectoryServer extends TCPServer {
                     serverSocket.send(sendPacket3);
                     break;
                 default:
-                    System.out.println("Host #" + this.getDirectoryServerID() + " received a bad message: " + message.substring(1) + " should have received " + Constants.INIT);
+                    System.out.println("Host #" + this.getServerID() + " received a bad message: " + message.substring(1) + " should have received " + Constants.INIT);
             }
         }
     }
@@ -122,7 +122,7 @@ class DirectoryServer extends TCPServer {
         }
         clientLookup.keySet().removeAll(keys);
         String rc = String.valueOf(keys.size());
-        return "Directory Server: " + getDirectoryServerID() + " removed " + rc + " records associated with client: " + clientIP;
+        return "Directory Server: " + getServerID() + " removed " + rc + " records associated with client: " + clientIP;
     }
 
 
