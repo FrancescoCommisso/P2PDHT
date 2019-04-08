@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 class Client extends UDPClient {
@@ -31,12 +35,6 @@ class Client extends UDPClient {
         return imagesPath;
     }
 
-    void testTCP() throws IOException {
-        String httpMessage = HTTPGenerator.createHTTPRequest("a.jpeg", Constants.CLIENT_IP_1);
-        this.tcpServer.sendTCPMessage(httpMessage, queryForContent("a"), Constants.PEER_TCP_IN_PORT);
-    }
-
-
     void init() throws IOException {
 
         while (directoryServerIPs.size() < 4) {
@@ -62,8 +60,23 @@ class Client extends UDPClient {
         return (sum % 4);
     }
 
-    void informAndUpdate(String contentName) throws IOException {
+    String parsePath(String path) {
+        int lastDash = 0;
+        for (int i = path.length() - 1; i >= 0; i--) {
+            if (path.substring(i, i + 1).equals("/")) {
+                lastDash = i + 1;
+                break;
+            }
+        }
+        return path.substring(lastDash);
+    }
+
+    void informAndUpdate(String path) throws IOException {
+        String contentName = parsePath(path);
         int serverIndex = hashContentName(contentName);
+        Path srcPath = Paths.get(path);
+        Path dstPath = Paths.get(imagesPath + "/" + contentName);
+        Files.copy(srcPath, dstPath, StandardCopyOption.REPLACE_EXISTING);
         sendUDPMessage(contentName, directoryServerIPs.get(serverIndex), Constants.DIRECTORY_SERVER_UDP_PORT, Constants.INFORM_AND_UPDATE);
     }
 
@@ -71,8 +84,13 @@ class Client extends UDPClient {
         int serverIndex = hashContentName(contentName);
         DatagramPacket receivePacket = sendUDPMessage(contentName, directoryServerIPs.get(serverIndex), Constants.DIRECTORY_SERVER_UDP_PORT, Constants.QUERY_FOR_CONTENT);
         String result = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
-        System.out.println("query for content returned: " + result);
+//        System.out.println("query for content returned: " + result);
         return result;
+    }
+
+    BufferedImage handleFileTransferRequest(String clientRequest) throws IOException {
+        String fileName = clientRequest.substring(4, clientRequest.length() - 9);
+        return ImageIO.read(new File(imagesPath + "/" + fileName));
     }
 
     void fileTransfer(String contentName) throws IOException {
@@ -89,11 +107,6 @@ class Client extends UDPClient {
         imageDirectory.delete();
     }
 
-    BufferedImage handleFileTransgerRequest(String clientRequest) throws IOException {
-        String fileName = clientRequest.substring(4, clientRequest.length() - 9);
-        System.out.println("about to read: " + imagesPath + "/" + fileName);
-        return ImageIO.read(new File(imagesPath + "/" + fileName));
-    }
 
 }
 

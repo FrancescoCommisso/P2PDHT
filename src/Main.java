@@ -16,37 +16,33 @@ public class Main {
         client3.init();
         client4.init();
 
-//        client2.informAndUpdate("picture of a dag");
-//        client1.informAndUpdate("a");
-//        client2.informAndUpdate("b");
-//        client2.informAndUpdate("selfie123");
-//        client1.informAndUpdate("grad");
-//        client3.informAndUpdate("c");
-//        client4.informAndUpdate("d");
-//        client4.informAndUpdate("a red car");
-//        client2.informAndUpdate("the monalisa");
-//        client3.informAndUpdate("a tiger");
+        client1.informAndUpdate("/Users/Francesco/Desktop/P2PImages/a.jpeg");
+        client2.informAndUpdate("/Users/Francesco/Desktop/P2PImages/b.jpeg");
+        client3.informAndUpdate("/Users/Francesco/Desktop/P2PImages/c.jpeg");
+        client4.informAndUpdate("/Users/Francesco/Desktop/P2PImages/d.jpeg");
 
 
-//        for (DirectoryServer ds : sp.getDirectoryServers()) {
-//            ds.printAllRecords();
-//        }
+        client1.queryForContent("c.jpeg");
 
-//        client1.queryForContent("a red car asd ");
-//        client2.queryForContent("a tiger");
+        System.out.println("\nAFTER PLACING ALL IMAGES THE DIRECTORY SERVERS LOOK LIKE:\n");
 
-        client1.informAndUpdate("a.jpeg");
-        client2.informAndUpdate("b.jpeg");
-        client3.informAndUpdate("c.jpeg");
-        client4.informAndUpdate("d.jpeg");
+        for (DirectoryServer ds : sp.getDirectoryServers()) {
+            ds.printAllRecords();
+        }
 
-        client1.fileTransfer("b.jpeg");
+        client1.fileTransfer("c.jpeg");
+        System.out.println("\nAFTER FILE TRANSFERS, ALL IMAGES THE DIRECTORY SERVERS LOOK LIKE:\n");
+        for (DirectoryServer ds : sp.getDirectoryServers()) {
+            ds.printAllRecords();
+        }
 
 
-//        client1.exit();
-//        client2.exit();
-//        client3.exit();
-//        client4.exit();
+        client1.exit();
+        client2.exit();
+        client3.exit();
+        client4.exit();
+
+        System.out.println("\nAFTER EXITING, ALL IMAGES THE DIRECTORY SERVERS LOOK LIKE:\n");
 
         for (DirectoryServer ds : sp.getDirectoryServers()) {
             ds.printAllRecords();

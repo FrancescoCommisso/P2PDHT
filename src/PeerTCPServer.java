@@ -29,7 +29,7 @@ public class PeerTCPServer extends TCPServer {
             DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
             clientMessage = inFromClient.readLine();
 
-            System.out.println("server: " + getServerID() + " received: " + clientMessage + " from: " + connectionSocket.getRemoteSocketAddress().toString());
+//            System.out.println("server: " + getServerID() + " received: " + clientMessage + " from: " + connectionSocket.getRemoteSocketAddress().toString());
             httpResponse = handleClientMessage(clientMessage);
             ImageIO.write(httpResponse, "jpg", outToClient);
             connectionSocket.close();
@@ -38,7 +38,7 @@ public class PeerTCPServer extends TCPServer {
 
     //    @Override
     protected BufferedImage handleClientMessage(String clientMessage) throws IOException {
-        return this.client.handleFileTransgerRequest(clientMessage);
+        return this.client.handleFileTransferRequest(clientMessage);
     }
 
     @Override

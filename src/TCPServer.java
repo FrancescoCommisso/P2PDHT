@@ -76,7 +76,7 @@ public class TCPServer {
 
         outToServer.writeBytes(data + '\n');
         response = inFromServer.readLine();
-        System.out.println("client: " + serverID + " received: " + response + " from: " + clientSocket.getRemoteSocketAddress().toString());
+//        System.out.println("client: " + serverID + " received: " + response + " from: " + clientSocket.getRemoteSocketAddress().toString());
         clientSocket.close();
     }
 

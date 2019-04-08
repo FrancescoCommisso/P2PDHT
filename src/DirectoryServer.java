@@ -109,8 +109,8 @@ class DirectoryServer extends TCPServer {
         clientLookup.put(contentName, clientIp);
     }
 
-    private String queryForContent(String contentName) {
-        return clientLookup.getOrDefault(contentName, Constants.DS_RESPONSE_IMAGE_NOT_FOUND);
+    public String queryForContent(String contentName) {
+        return clientLookup.getOrDefault(contentName, "Key not found: " + contentName + "at server: " + getServerID());
     }
 
     private String exit(String clientIP) {
